@@ -1,5 +1,5 @@
-# Interval Master ⏱️
-
+# Interval Master ⏱️ 
+**En desarrollo**
 **IntervalMaster** es una aplicación de cronometraje de ejercicios desarrollada en **Flutter**, diseñada para crear entrenamientos intermitentes personalizados con ciclos, rondas y tiempos completamente configurables. Su enfoque principal es proporcionar una **interfaz clara, intuitiva y fácil de usar** para maximizar la eficiencia de tus entrenamientos.
 
 ## 📋 Características
