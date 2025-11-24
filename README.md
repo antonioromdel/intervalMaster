@@ -1,6 +1,6 @@
-# FitChrono ⏱️
+# Interval Master ⏱️
 
-**FitChrono** es una aplicación de cronometraje de ejercicios desarrollada en **Flutter**, diseñada para crear entrenamientos intermitentes personalizados con ciclos, rondas y tiempos completamente configurables. Su enfoque principal es proporcionar una **interfaz clara, intuitiva y fácil de usar** para maximizar la eficiencia de tus entrenamientos.
+**IntervalMaster** es una aplicación de cronometraje de ejercicios desarrollada en **Flutter**, diseñada para crear entrenamientos intermitentes personalizados con ciclos, rondas y tiempos completamente configurables. Su enfoque principal es proporcionar una **interfaz clara, intuitiva y fácil de usar** para maximizar la eficiencia de tus entrenamientos.
 
 ## 📋 Características
 
@@ -24,8 +24,8 @@
 
 1. **Clona el repositorio**
    ```bash
-   git clone https://github.com/tu-usuario/fitchrono.git
-   cd fitchrono
+   git clone https://github.com/antonioromdel/intervalMaster.git
+   cd intervalMaster
    ```
 
 2. **Instala las dependencias**
@@ -45,7 +45,6 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  # Añade aquí tus dependencias específicas
   # flutter_local_notifications: ^x.x.x (si usas notificaciones)
 ```
 
@@ -105,7 +104,7 @@ Este proyecto está bajo la Licencia MIT. Consulta el archivo `LICENSE` para má
 
 ## 👤 Autor
 
-**Tu Nombre**
+**Antonio RomDev**
 - GitHub: [@antonioromdel(https://github.com/antonioromdel)
 
 ## 🙏 Agradecimientos
