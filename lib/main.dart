@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Interval Master',
       theme: AppTheme.darkTheme,
       home: const HomeScreen(),
     );

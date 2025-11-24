@@ -1,6 +1,7 @@
 // lib/screens/timer_screen.dart
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
 import '../models/workout_config.dart';
 
 enum WorkoutPhase { preparation, exercise, rest, restBetweenRounds, finished }
@@ -16,10 +17,14 @@ class TimerExecution extends StatefulWidget {
 
 class _TimerExecutionState extends State<TimerExecution> {
   late int _secondsRemaining;
+  late int _totalPhaseSeconds;
   late WorkoutPhase _currentPhase;
+
   int _currentCycle = 1;
   int _currentRound = 1;
   Timer? _timer;
+
+  final AudioPlayer _player = AudioPlayer();
 
   @override
   void initState() {
@@ -27,34 +32,59 @@ class _TimerExecutionState extends State<TimerExecution> {
     _startPreparation();
   }
 
+  // ---- REPRODUCIR SONIDOS ----
+  Future<void> _playBeep() async {
+    await _player.play(AssetSource('sounds/beep.mp3'));
+  }
+
+  Future<void> _playBell() async {
+    await _player.play(AssetSource('sounds/start_training.mp3'));
+  }
+
+  Future<void> _playTripleBell() async {
+    await _player.play(AssetSource('sounds/training_end.mp3'));
+  }
+
+  // ---- FASES ----
   void _startPreparation() {
     _currentPhase = WorkoutPhase.preparation;
-    _secondsRemaining = widget.config.preparationTime;
+    _totalPhaseSeconds = widget.config.preparationTime;
+    _secondsRemaining = _totalPhaseSeconds;
     _startTimer();
   }
 
   void _startExercise() {
     _currentPhase = WorkoutPhase.exercise;
-    _secondsRemaining = widget.config.exerciseTime;
+    _totalPhaseSeconds = widget.config.exerciseTime;
+    _secondsRemaining = _totalPhaseSeconds;
+    _playBell();
     _startTimer();
   }
 
   void _startRest() {
     _currentPhase = WorkoutPhase.rest;
-    _secondsRemaining = widget.config.restBetweenExercises;
+    _totalPhaseSeconds = widget.config.restBetweenExercises;
+    _secondsRemaining = _totalPhaseSeconds;
     _startTimer();
   }
 
   void _startRestBetweenRounds() {
     _currentPhase = WorkoutPhase.restBetweenRounds;
-    _secondsRemaining = widget.config.restBetweenRounds;
+    _totalPhaseSeconds = widget.config.restBetweenRounds;
+    _secondsRemaining = _totalPhaseSeconds;
     _startTimer();
   }
 
+  // ---- CONTADOR ----
   void _startTimer() {
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
+        // Sonido de cuenta atrás
+        if (_secondsRemaining <= 3 && _secondsRemaining > 0) {
+          _playBeep();
+        }
+
         if (_secondsRemaining > 0) {
           _secondsRemaining--;
         } else {
@@ -65,11 +95,13 @@ class _TimerExecutionState extends State<TimerExecution> {
     });
   }
 
+  // ---- CAMBIO DE FASE ----
   void _nextPhase() {
     switch (_currentPhase) {
       case WorkoutPhase.preparation:
         _startExercise();
         break;
+
       case WorkoutPhase.exercise:
         if (_currentCycle < widget.config.cycles) {
           _currentCycle++;
@@ -82,20 +114,27 @@ class _TimerExecutionState extends State<TimerExecution> {
           _finishWorkout();
         }
         break;
+
       case WorkoutPhase.rest:
         _startExercise();
         break;
+
       case WorkoutPhase.restBetweenRounds:
         _startExercise();
         break;
+
       case WorkoutPhase.finished:
         break;
     }
   }
 
-  void _finishWorkout() {
+  // ---- FINALIZAR ----
+  void _finishWorkout() async {
     _currentPhase = WorkoutPhase.finished;
     _secondsRemaining = 0;
+
+    await _playTripleBell();
+
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
@@ -114,16 +153,17 @@ class _TimerExecutionState extends State<TimerExecution> {
     );
   }
 
+  // ---- COLORES ----
   Color _backgroundColor() {
     switch (_currentPhase) {
       case WorkoutPhase.preparation:
-        return const Color(0xFF1E3A8A); // Azul oscuro
+        return const Color(0xFF1E3A8A);
       case WorkoutPhase.exercise:
-        return const Color(0xFF166534); // Verde oscuro
+        return const Color(0xFF166534);
       case WorkoutPhase.rest:
-        return const Color(0xFF1E40AF); // Azul grisáceo
+        return const Color(0xFF1E40AF);
       case WorkoutPhase.restBetweenRounds:
-        return const Color(0xFF5B21B6); // Morado oscuro
+        return const Color(0xFF5B21B6);
       case WorkoutPhase.finished:
         return Colors.grey;
     }
@@ -144,9 +184,15 @@ class _TimerExecutionState extends State<TimerExecution> {
     }
   }
 
+  double _progressValue() {
+    if (_totalPhaseSeconds == 0) return 1;
+    return 1 - (_secondsRemaining / _totalPhaseSeconds);
+  }
+
   @override
   void dispose() {
     _timer?.cancel();
+    _player.dispose();
     super.dispose();
   }
 
@@ -167,16 +213,36 @@ class _TimerExecutionState extends State<TimerExecution> {
                   color: Colors.white,
                 ),
               ),
+
               const SizedBox(height: 24),
-              Text(
-                '$_secondsRemaining s',
-                style: const TextStyle(
-                  fontSize: 72,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+
+              // ---- BARRA CIRCULAR ----
+              SizedBox(
+                height: 200,
+                width: 200,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    CircularProgressIndicator(
+                      value: _progressValue(),
+                      strokeWidth: 70,
+                      backgroundColor: Colors.white24,
+                      valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                    Text(
+                      '$_secondsRemaining s',
+                      style: const TextStyle(
+                        fontSize: 48,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 24),
+
+              const SizedBox(height: 30),
+
               Text(
                 'Ronda: $_currentRound / ${widget.config.rounds}',
                 style: const TextStyle(fontSize: 20, color: Colors.white),
@@ -185,7 +251,9 @@ class _TimerExecutionState extends State<TimerExecution> {
                 'Ciclo: $_currentCycle / ${widget.config.cycles}',
                 style: const TextStyle(fontSize: 20, color: Colors.white),
               ),
+
               const SizedBox(height: 40),
+
               ElevatedButton(
                 onPressed: () {
                   _timer?.cancel();
