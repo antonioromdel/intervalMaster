@@ -1,6 +1,7 @@
 // lib/screens/home_screen.dart
 import 'package:flutter/material.dart';
 import 'package:intervalmaster/models/workout_config.dart';
+import 'package:intervalmaster/screens/save_workout_screen.dart';
 import 'package:intervalmaster/screens/timer_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -70,6 +71,18 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: // 🔥 BOTÓN DE MENÚ
+        IconButton(
+          icon: const Icon(Icons.list, size: 34, color: Colors.white),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const SavedWorkoutsScreen()),
+            );
+          },
+        ),
+      ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -84,9 +97,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             child: SlideTransition(
               position: _slideAnimation,
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(22),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _buildHeader(),
                     const SizedBox(height: 32),
@@ -107,35 +120,42 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   }
 
   Widget _buildHeader() {
-    return Column(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Icon(
-          Icons.timer_outlined,
-          size: 64,
-          color: Color(0xFF6C63FF),
-        ),
-        const SizedBox(height: 16),
-        const Text(
-          'Interval Master',
-          style: TextStyle(
-            fontSize: 42,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            letterSpacing: 2,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          'Tu entrenamiento personalizado',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.white.withOpacity(0.6),
-            letterSpacing: 1,
-          ),
-        ),
+
+        Column(
+          children: [
+            const Icon(
+              Icons.timer_outlined,
+              size: 64,
+              color: Color(0xFF6C63FF),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Interval Master',
+              style: TextStyle(
+                fontSize: 42,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                letterSpacing: 2,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Tu entrenamiento personalizado',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white70,
+                letterSpacing: 1,
+              ),
+            ),
+          ],
+        )
       ],
     );
   }
+
 
   Widget _buildQuickStats() {
     final totalTime = _calculateTotalTime();

@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:intervalmaster/models/sounds.dart';
 import '../models/workout_config.dart';
 
 enum WorkoutPhase { preparation, exercise, rest, restBetweenRounds, finished }
@@ -24,25 +25,12 @@ class _TimerExecutionState extends State<TimerExecution> {
   int _currentRound = 1;
   Timer? _timer;
 
-  final AudioPlayer _player = AudioPlayer();
+  final Sounds _player = Sounds();
 
   @override
   void initState() {
     super.initState();
     _startPreparation();
-  }
-
-  // ---- REPRODUCIR SONIDOS ----
-  Future<void> _playBeep() async {
-    await _player.play(AssetSource('sounds/beep.mp3'));
-  }
-
-  Future<void> _playBell() async {
-    await _player.play(AssetSource('sounds/start_training.mp3'));
-  }
-
-  Future<void> _playTripleBell() async {
-    await _player.play(AssetSource('sounds/training_end.mp3'));
   }
 
   // ---- FASES ----
@@ -57,7 +45,7 @@ class _TimerExecutionState extends State<TimerExecution> {
     _currentPhase = WorkoutPhase.exercise;
     _totalPhaseSeconds = widget.config.exerciseTime;
     _secondsRemaining = _totalPhaseSeconds;
-    _playBell();
+    _player.playStart();
     _startTimer();
   }
 
@@ -82,7 +70,7 @@ class _TimerExecutionState extends State<TimerExecution> {
       setState(() {
         // Sonido de cuenta atrás
         if (_secondsRemaining <= 3 && _secondsRemaining > 0) {
-          _playBeep();
+          _player.playCount();
         }
 
         if (_secondsRemaining > 0) {
@@ -133,13 +121,13 @@ class _TimerExecutionState extends State<TimerExecution> {
     _currentPhase = WorkoutPhase.finished;
     _secondsRemaining = 0;
 
-    await _playTripleBell();
+    await _player.playFinish();
 
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
         title: const Text('¡Entrenamiento completado!'),
-        content: const Text('¡Has terminado todas las rondas!'),
+        content: const Text('¡Enhorabuena! ¡Has terminado todas las rondas!'),
         actions: [
           TextButton(
             onPressed: () {
@@ -172,15 +160,15 @@ class _TimerExecutionState extends State<TimerExecution> {
   String _phaseLabel() {
     switch (_currentPhase) {
       case WorkoutPhase.preparation:
-        return 'Preparación';
+        return '¡Prepárate!';
       case WorkoutPhase.exercise:
-        return 'Ejercicio';
+        return '¡Vamos! ¡Dale caña!';
       case WorkoutPhase.rest:
-        return 'Descanso';
+        return 'Recupera un poco...';
       case WorkoutPhase.restBetweenRounds:
-        return 'Descanso entre rondas';
+        return 'Un descanso... Y seguimos';
       case WorkoutPhase.finished:
-        return '¡Terminado!';
+        return '¡Hemos terminado!';
     }
   }
 
@@ -192,7 +180,7 @@ class _TimerExecutionState extends State<TimerExecution> {
   @override
   void dispose() {
     _timer?.cancel();
-    _player.dispose();
+    _player.disposeSounds();
     super.dispose();
   }
 
