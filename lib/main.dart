@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:intervalmaster/provider/workout_provider.dart';
 import 'package:intervalmaster/screens/home_screen.dart';
 import 'package:intervalmaster/theme/app_theme.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => WorkoutProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

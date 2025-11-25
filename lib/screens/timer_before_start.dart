@@ -16,8 +16,8 @@ class TimerBeforeStart extends StatelessWidget {
         children: [
           Center(
             child: Text(
-              'Preparación: ${config.preparationTime}s\n'
-                  'Ejercicio: ${config.exerciseTime}s\n'
+              'Preparación: ${config.preparation}s\n'
+                  'Ejercicio: ${config.exercise}s\n'
                   'Descanso entre ejercicios: ${config.restBetweenExercises}s\n'
                   'Descanso entre rondas: ${config.restBetweenRounds}s\n'
                   'Ciclos: ${config.cycles}\n'

@@ -72,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: // 🔥 BOTÓN DE MENÚ
+        leading:
         IconButton(
           icon: const Icon(Icons.list, size: 34, color: Colors.white),
           onPressed: () {
@@ -531,8 +531,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         child: InkWell(
           onTap: () {
             final config = WorkoutConfig(
-              preparationTime: preparationTime,
-              exerciseTime: exerciseTime,
+              name: 'Entrenamiento Rápido',
+              preparation: preparationTime,
+              exercise: exerciseTime,
               restBetweenExercises: restBetweenExercises,
               restBetweenRounds: restBetweenRounds,
               cycles: cycles,

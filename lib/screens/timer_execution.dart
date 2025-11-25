@@ -36,14 +36,14 @@ class _TimerExecutionState extends State<TimerExecution> {
   // ---- FASES ----
   void _startPreparation() {
     _currentPhase = WorkoutPhase.preparation;
-    _totalPhaseSeconds = widget.config.preparationTime;
+    _totalPhaseSeconds = widget.config.preparation;
     _secondsRemaining = _totalPhaseSeconds;
     _startTimer();
   }
 
   void _startExercise() {
     _currentPhase = WorkoutPhase.exercise;
-    _totalPhaseSeconds = widget.config.exerciseTime;
+    _totalPhaseSeconds = widget.config.exercise;
     _secondsRemaining = _totalPhaseSeconds;
     _player.playStart();
     _startTimer();
@@ -68,16 +68,15 @@ class _TimerExecutionState extends State<TimerExecution> {
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
-        // Sonido de cuenta atrás
-        if (_secondsRemaining <= 3 && _secondsRemaining > 0) {
-          _player.playCount();
-        }
-
         if (_secondsRemaining > 0) {
           _secondsRemaining--;
         } else {
           _timer?.cancel();
           _nextPhase();
+        }
+        // Sonido de cuenta atrás
+        if (_secondsRemaining <= 3 && _secondsRemaining > 0) {
+          _player.playCount();
         }
       });
     });

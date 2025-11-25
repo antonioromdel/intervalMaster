@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intervalmaster/helpers/sqflite/workout_storage.dart';
+import 'package:intervalmaster/models/workout_config.dart';
+import 'package:intervalmaster/provider/workout_provider.dart';
+import 'package:provider/provider.dart';
 
 class AddWorkoutScreen extends StatefulWidget {
   const AddWorkoutScreen({super.key});
@@ -46,7 +50,6 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
             ),
             const SizedBox(height: 30),
 
-            // 🎛️ Aquí puedes usar tus propias tarjetas de configuración
             _buildSlider("Preparación", preparationTime, 5, 30,
                     (v) => setState(() => preparationTime = v)),
             _buildSlider("Ejercicio", exerciseTime, 10, 60,
@@ -67,8 +70,30 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                 backgroundColor: const Color(0xFF6C63FF),
                 padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 50),
               ),
-              onPressed: () {
-                // Aquí después guardaremos en provider/sqlite/firebase
+              onPressed: () async {
+                final name = nameController.text.trim();
+                if(name.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("El nombre del entrenamiento no puede estar vacío"),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                  return;
+                }
+                final workout = WorkoutConfig(
+                  name: nameController.text,
+                  preparation: preparationTime,
+                  exercise: exerciseTime,
+                  restBetweenExercises: restBetweenExercises,
+                  restBetweenRounds: restBetweenRounds,
+                  cycles: cycles,
+                  rounds: rounds,
+                );
+
+                await Provider.of<WorkoutProvider>(context, listen: false)
+                    .addWorkout(workout);
+
                 Navigator.pop(context);
               },
               child: const Text("Guardar entrenamiento"),
