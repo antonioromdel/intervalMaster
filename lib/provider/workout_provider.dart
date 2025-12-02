@@ -15,8 +15,13 @@ class WorkoutProvider extends ChangeNotifier {
     await loadWorkouts();
   }
 
-  Future<void> deleteWorkout(int index) async {
-    await WorkoutStorage.deleteWorkoutById(index);
+  Future<void> updateWorkout(WorkoutConfig workout) async {
+    await WorkoutStorage.updateWorkout(workout);
+    await loadWorkouts();
+  }
+
+  Future<void> deleteWorkout(int id) async {
+    await WorkoutStorage.deleteWorkoutById(id);
     await loadWorkouts();
   }
 }

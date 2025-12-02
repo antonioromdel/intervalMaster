@@ -28,6 +28,19 @@ class WorkoutStorage {
     await prefs.setStringList(key, encoded);
   }
 
+  static Future<void> updateWorkout(WorkoutConfig workout) async {
+    final prefs = await SharedPreferences.getInstance();
+    final workouts = await getWorkouts();
+
+    final index = workouts.indexWhere((w) => w.id == workout.id);
+
+    if (index != -1) {
+      workouts[index] = workout;
+      final encoded = workouts.map((w) => jsonEncode(w.toMap())).toList();
+      await prefs.setStringList(key, encoded);
+    }
+  }
+
   static Future<void> deleteWorkoutById(int id) async {
     final prefs = await SharedPreferences.getInstance();
     final workouts = await getWorkouts();
@@ -41,6 +54,3 @@ class WorkoutStorage {
     await prefs.remove(key);
   }
 }
-
-
-

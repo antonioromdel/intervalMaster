@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intervalmaster/provider/workout_provider.dart';
 import 'package:provider/provider.dart';
 import 'add_workout_screen.dart';
+import 'timer_execution.dart';
 
 class SavedWorkoutsScreen extends StatefulWidget {
   const SavedWorkoutsScreen({super.key});
@@ -29,7 +30,6 @@ class _SavedWorkoutsScreenState extends State<SavedWorkoutsScreen> {
         title: const Text("Entrenamientos guardados"),
         backgroundColor: const Color(0xFF1A1A2E),
       ),
-
       body: workoutProvider.workouts.isEmpty
           ? const Center(
         child: Text(
@@ -42,28 +42,56 @@ class _SavedWorkoutsScreenState extends State<SavedWorkoutsScreen> {
         itemCount: workoutProvider.workouts.length,
         itemBuilder: (context, index) {
           final w = workoutProvider.workouts[index];
-
           return Card(
             color: const Color(0xFF1A1A2E),
             margin: const EdgeInsets.only(bottom: 16),
-            child: ListTile(
-              title: Text(
-                w.name,
-                style: const TextStyle(color: Colors.white, fontSize: 18),
-              ),
-              subtitle: Text(
-                "Ciclos: ${w.cycles} | Rondas: ${w.rounds}",
-                style: const TextStyle(color: Colors.white54),
-              ),
-              trailing: const Icon(Icons.chevron_right, color: Colors.white),
-              onTap: () {
-                // TODO: abrir detalles, editar, etc.
-              },
+            child: Column(
+              children: [
+                ListTile(
+                  title: Text(
+                    w.name,
+                    style: const TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                  subtitle: Text(
+                    "Ciclos: ${w.cycles} | Rondas: ${w.rounds}",
+                    style: const TextStyle(color: Colors.white54),
+                  ),
+                  trailing: const Icon(Icons.chevron_right, color: Colors.white),
+                  onTap: () async {
+                    // Navegar a la pantalla de edición
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AddWorkoutScreen(workoutToEdit: w),
+                      ),
+                    );
+                    workoutProvider.loadWorkouts();
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF6C63FF),
+                      minimumSize: const Size(double.infinity, 45),
+                    ),
+                    icon: const Icon(Icons.play_arrow),
+                    label: const Text("Comenzar entrenamiento"),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => TimerExecution(config: w),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
           );
         },
       ),
-
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color(0xFF6C63FF),
         child: const Icon(Icons.add),
@@ -74,7 +102,6 @@ class _SavedWorkoutsScreenState extends State<SavedWorkoutsScreen> {
               builder: (context) => const AddWorkoutScreen(),
             ),
           );
-
           workoutProvider.loadWorkouts();
         },
       ),
