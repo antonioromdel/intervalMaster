@@ -1,7 +1,6 @@
 // lib/screens/timer_screen.dart
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:intervalmaster/models/sounds.dart';
 import '../models/workout_config.dart';
 
@@ -71,14 +70,7 @@ class _TimerExecutionState extends State<TimerExecution> {
         if (_secondsRemaining > 0) {
           _secondsRemaining--;
 
-          // Sonido de cuenta atrás 3 segundos antes de finalizar cualquier fase
-          if (_secondsRemaining == 2) {
-            _player.playCount();
-          }
-          if (_secondsRemaining == 1) {
-            _player.playCount();
-          }
-          if (_secondsRemaining == 0) {
+          if(_secondsRemaining < 3){
             _player.playCount();
           }
 
