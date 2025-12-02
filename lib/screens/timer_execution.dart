@@ -45,7 +45,7 @@ class _TimerExecutionState extends State<TimerExecution> {
     _currentPhase = WorkoutPhase.exercise;
     _totalPhaseSeconds = widget.config.exercise;
     _secondsRemaining = _totalPhaseSeconds;
-    _player.playStart();
+    _player.playStart(); // Sonido al empezar el ejercicio
     _startTimer();
   }
 
@@ -70,13 +70,27 @@ class _TimerExecutionState extends State<TimerExecution> {
       setState(() {
         if (_secondsRemaining > 0) {
           _secondsRemaining--;
+
+          // Sonido de cuenta atrás 3 segundos antes de finalizar cualquier fase
+          if (_secondsRemaining == 2) {
+            _player.playCount();
+          }
+          if (_secondsRemaining == 1) {
+            _player.playCount();
+          }
+          if (_secondsRemaining == 0) {
+            _player.playCount();
+          }
+
         } else {
           _timer?.cancel();
+
+          // Sonido al terminar un ejercicio
+          if (_currentPhase == WorkoutPhase.exercise) {
+            _player.playFinishExercise();
+          }
+
           _nextPhase();
-        }
-        // Sonido de cuenta atrás
-        if (_secondsRemaining <= 3 && _secondsRemaining > 0) {
-          _player.playCount();
         }
       });
     });
@@ -120,6 +134,7 @@ class _TimerExecutionState extends State<TimerExecution> {
     _currentPhase = WorkoutPhase.finished;
     _secondsRemaining = 0;
 
+    // Sonido al finalizar el entrenamiento completo
     await _player.playFinish();
 
     showDialog(

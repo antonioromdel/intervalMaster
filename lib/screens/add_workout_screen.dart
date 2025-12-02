@@ -27,7 +27,6 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
   void initState() {
     super.initState();
 
-    // Si hay un entrenamiento para editar, cargar sus valores
     if (widget.workoutToEdit != null) {
       _isEditing = true;
       final workout = widget.workoutToEdit!;
